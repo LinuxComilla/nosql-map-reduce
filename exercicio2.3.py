@@ -1,11 +1,6 @@
-from stopwords import allStopWords
-import mincemeat, glob, re
+import mincemeat, glob
 
 text_files = glob.glob('db/*')
-
-autor = {}
-info = {}
-title = {}
 
 def file_contents(file_name):
     f = open(file_name)
@@ -16,54 +11,25 @@ def file_contents(file_name):
 
 source = dict((file_name, file_contents(file_name)) for file_name in text_files)
 
-def getAutores(line):
-    autores = line.split("::")
-    return autores; 
-
-def cleanTitle(row_title):
-    title = row_title.split(" ")
-    for t in title:
-        re.sub('^A-Za-z0-9]+', '', t)
-    for k in allStopWords.keys():
-        if k in title:
-            title.remove(k)
-    return title
-
-def countTerms(autores, terms):
-    for au in autores:
-        for term in terms:
-            if not au in autor.keys():
-                autor[au] = {}
-            if not term in autor[au].keys():
-                autor[au][term] = 1
-            else:
-                autor[au][term] += 1
-
 def mapfn(k, v):
-    row = v.split(":::")
-    info = row[0]
-    title = row[2]
-    autores = getAutores(row[1])
-    terms = cleanTitle(title)
-
-
-    countTerms(autores, terms)
-    print autor
+    import functions
+    for line in v.splitlines():
+        row = line.split(":::")
+        authors = functions.getAuthors(row[1])
+        terms = functions.cleanTitle(row[2])
+        authors = functions.count(authors, terms)
+        yield authors, 1
 
 def reducefn(k, v):
-    return null
+    print("reduce " + v)
+    return v
 
-for x,y in source.items():
-    mapfn(x, y)
-
-"""
-s = mincemeat.server()
+s = mincemeat.Server()
 s.datasource = source
 s.mapfn = mapfn
 s.reducefn = reducefn
 
-
-results = s.run_server(password="pass")
+results =  s.run_server(password="nosql")
 for k, v in resutls.items():
-    print 'key: ' + k + 'value: ' + v
-"""
+    var = 'key: ' + k + 'value: ' + v
+    print(var)
