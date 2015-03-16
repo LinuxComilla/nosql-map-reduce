@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import mincemeat, glob
 
 text_files = glob.glob('db/*')
@@ -24,8 +25,9 @@ def reducefn(author, terms):
     import functions
     list = functions.count(author, terms)
     if author in ['Grzegorz Rozenberg','Philip S. Yu']:
-        print(author)
-        print(list)
+        import operator
+        print("Autor: ", author)
+        print("Palavra com maior ocorência: ", max(list.iteritems(), key=operator.itemgetter(1))[0])
     return list
 
 s = mincemeat.Server()
