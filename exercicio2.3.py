@@ -26,8 +26,10 @@ def reducefn(author, terms):
     list = functions.count(author, terms)
     if author in ['Grzegorz Rozenberg','Philip S. Yu']:
         import operator
-        print("Autor: ", author)
-        print("Palavra com maior ocorência: ", max(list.iteritems(), key=operator.itemgetter(1))[0])
+        print('Autor: '),
+        print(author)
+        print(u'Palavra com maior ocorência: '.encode('utf-8')),
+        print(max(list.iteritems(), key=operator.itemgetter(1))[0])
     return list
 
 s = mincemeat.Server()
