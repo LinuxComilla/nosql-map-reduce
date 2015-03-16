@@ -17,12 +17,16 @@ def mapfn(k, v):
         row = line.split(":::")
         authors = functions.getAuthors(row[1])
         terms = functions.cleanTitle(row[2])
-        authors = functions.count(authors, terms)
-        yield authors, 1
+        for author in authors:
+            yield author, terms
 
-def reducefn(k, v):
-    print("reduce " + v)
-    return v
+def reducefn(author, terms):
+    import functions
+    list = functions.count(author, terms)
+    if author in ['Grzegorz Rozenberg','Philip S. Yu']:
+        print(author)
+        print(list)
+    return list
 
 s = mincemeat.Server()
 s.datasource = source
@@ -30,6 +34,6 @@ s.mapfn = mapfn
 s.reducefn = reducefn
 
 results =  s.run_server(password="nosql")
-for k, v in resutls.items():
-    var = 'key: ' + k + 'value: ' + v
-    print(var)
+for k, v in results.items():
+    print(k)
+    print(v)
